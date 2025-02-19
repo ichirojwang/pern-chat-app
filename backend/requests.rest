@@ -1,0 +1,38 @@
+### Check if Logged In (GET)
+GET http://localhost:5000/api/auth/me
+Accept: application/json
+
+###
+
+### Sign Up (POST)
+POST http://localhost:5000/api/auth/signup
+Content-Type: application/json
+
+{
+  "fullName": "LonZo Ball",
+  "username": "zo2",
+  "password": "password",
+  "confirmPassword": "password",
+  "gender": "male"
+}
+
+###
+
+### Log In (POST)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "zo2",
+  "password": "password"
+}
+
+###
+
+### Log Out (POST)
+POST http://localhost:5000/api/auth/logout
+Content-Type: application/json
+
+{
+  "message": "Logging out"
+}
