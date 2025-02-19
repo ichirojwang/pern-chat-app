@@ -2,13 +2,16 @@ import dotenv from "dotenv";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import http from "http";
 
-import { app, server } from "./socket/socket.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+import { initSocket } from "./socket/socket.js";
 
 dotenv.config(); // access .env
-const PORT = process.env.PORT || 5000;
+
+const app = express();
+const server = http.createServer(app);
 
 app.use(cookieParser()); // to parse cookies
 app.use(express.json()); // to parse json data
@@ -22,6 +25,6 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const io = initSocket(server);
+
+export { app, server, io };
