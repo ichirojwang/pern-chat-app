@@ -4,14 +4,13 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import http from "http";
 
-import authRoutes from "./routes/auth.route.js";
-import messageRoutes from "./routes/message.route.js";
-import { initSocket } from "./socket/socket.js";
+import authRoutes from "./routes/auth.route.ts";
+import messageRoutes from "./routes/message.route.ts";
+import { initSocket } from "./socket/socket.ts";
 
 dotenv.config(); // access .env
 
 const app = express();
-const server = http.createServer(app);
 
 app.use(cookieParser()); // to parse cookies
 app.use(express.json()); // to parse json data
@@ -25,6 +24,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
+const server = http.createServer(app);
 const io = initSocket(server);
 
 export { app, server, io };

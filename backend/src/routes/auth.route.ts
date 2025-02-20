@@ -1,8 +1,8 @@
 // /api/auth
 
 import express, { Request, Response } from "express";
-import { login, logout, signup, getMe } from "../controllers/auth.controller.js";
-import protectRoute from "../middleware/protectRoute.js";
+import { login, logout, signup, getMe } from "../controllers/auth.controller.ts";
+import protectRoute from "../middleware/protectRoute.ts";
 
 const router = express.Router();
 
@@ -21,7 +21,7 @@ router.post("/test", async (req: Request, res: Response): Promise<void> => {
   res.send({ userId: 0 });
 });
 router.get("/test", (req: Request, res: Response): void => {
-  res.send([]);
+  res.json({ message: "auth test route" });
 });
 
 export default router;
