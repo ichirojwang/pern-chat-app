@@ -1,31 +1,190 @@
-import request from "supertest";
-import { server } from "../../index.ts";
+import { jest, expect, test } from "@jest/globals";
+import httpMocks from "node-mocks-http";
+import { login, signup } from "../../controllers/auth.controller.ts";
+import prisma from "../../db/prisma.ts";
 
-describe("authentication route tests", () => {
-  afterAll((done) => {
-    server.close(); // close server to avoid open handle
-    done();
+jest.mock("../../db/prisma.ts", () => ({
+  user: {
+    findUnique: jest.fn(() => null),
+    create: jest.fn(() => ({
+      id: 1,
+      fullName: "LeBron James",
+      username: "lebronjames",
+      profilePic: "lebronpicture.png",
+    })),
+  },
+}));
+
+jest.mock("bcryptjs", () => ({
+  genSalt: jest.fn(() => "salt"),
+  hash: jest.fn((password: string, salt: string) => salt + password),
+  compare: jest.fn((a: string, b: string) => a === b),
+}));
+
+jest.mock("../../utils/generateToken.ts");
+
+const existingUser = {
+  id: "1",
+  fullName: "lebron",
+  username: "lebronjames",
+  profilePic: "lebronpicture.png",
+};
+
+// afterAll((done) => {
+//   server.close(); // close server to avoid open handle
+//   done();
+// });
+
+describe("signup route tests", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  test("GET /me", async () => {
-    const res = await request(server).get("/api/auth/me");
-    expect(res.statusCode).toBe(401);
-    expect(res.body.error).toContain("Unauthorized");
-  });
-
-  test("GET /test", async () => {
-    const res = await request(server).get("/api/auth/test");
-    expect(res.body).toEqual({ message: "auth test route" });
-    expect(res.statusCode).toBe(200);
-  });
-
-  test("POST /test", async () => {
-    const res = await request(server).post("/api/auth/test").send({
-      username: "joe",
-      password: "mama",
+  test("successful signup", async () => {
+    const req = httpMocks.createRequest({
+      method: "POST",
+      body: {
+        fullName: "lebron james",
+        username: "lebronjames",
+        password: "password",
+        confirmPassword: "password",
+        gender: "male",
+      },
     });
-    expect(res.headers["content-type"]).toEqual(expect.stringContaining("json"));
-    expect(res.statusCode).toBe(200);
-    expect(res.body.userId).toBeDefined();
+    const res = httpMocks.createResponse();
+
+    await signup(req, res);
+    expect(res.statusCode).toBe(201);
+    expect(res._getJSONData().id).toBeDefined();
+  });
+
+  test("signup missing fields", async () => {
+    const inputs = [
+      {
+        fullName: "LeBron James",
+        username: "lebronjames",
+        password: "password",
+        confirmPassword: "password",
+      },
+      {
+        fullName: "LeBron James",
+        password: "password",
+        gender: "male",
+      },
+      {},
+    ];
+    for (const input of inputs) {
+      const req = httpMocks.createRequest({
+        method: "POST",
+        body: input,
+      });
+      const res = httpMocks.createResponse();
+
+      await signup(req, res);
+      expect(res.statusCode).toBe(400);
+      expect(res._getJSONData().error).toEqual("Please fill in all fields");
+    }
+  });
+
+  test("signup not matching passwords", async () => {
+    const req = httpMocks.createRequest({
+      method: "POST",
+      body: {
+        fullName: "lebron james",
+        username: "lebronjames",
+        password: "password",
+        confirmPassword: "badpassword",
+        gender: "male",
+      },
+    });
+    const res = httpMocks.createResponse();
+
+    await signup(req, res);
+    expect(res.statusCode).toBe(400);
+    expect(res._getJSONData().error).toEqual("Passwords don't match");
+  });
+
+  test("signup with duplicate username", async () => {
+    const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(existingUser as any);
+
+    const req = httpMocks.createRequest({
+      method: "POST",
+      body: {
+        fullName: "lebron james",
+        username: "lebronjames",
+        password: "password",
+        confirmPassword: "password",
+        gender: "male",
+      },
+    });
+    const res = httpMocks.createResponse();
+
+    await signup(req, res);
+    expect(res.statusCode).toBe(400);
+    expect(res._getJSONData().error).toEqual("Username already exists");
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ where: { username: "lebronjames" } });
   });
 });
+
+describe("login route tests", () => {
+  test("successful login", async () => {
+    const spy = jest
+      .spyOn(prisma.user, "findUnique")
+      .mockResolvedValueOnce({ ...existingUser, password: "password" } as any);
+
+    const req = httpMocks.createRequest({
+      method: "POST",
+      body: {
+        username: "lebronjames",
+        password: "password",
+      },
+    });
+    const res = httpMocks.createResponse();
+
+    await login(req, res);
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData().id).toBeDefined();
+    expect(spy).toHaveBeenCalledWith({ where: { username: "lebronjames" } });
+  });
+  test("bad login (no user found)", async () => {
+    const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(null as any);
+    const req = httpMocks.createRequest({
+      method: "POST",
+      body: {
+        username: "lebronjames",
+        password: "password",
+      },
+    });
+    const res = httpMocks.createResponse();
+
+    await login(req, res);
+    expect(res.statusCode).toBe(400);
+    expect(res._getJSONData().error).toEqual("Invalid credentials");
+  });
+
+  test("bad login (not matching password)", async () => {
+    const spy = jest
+      .spyOn(prisma.user, "findUnique")
+      .mockResolvedValueOnce({ ...existingUser, password: "badpassword" } as any);
+
+    const req = httpMocks.createRequest({
+      method: "POST",
+      body: {
+        username: "lebronjames",
+        password: "password",
+      },
+    });
+    const res = httpMocks.createResponse();
+
+    await login(req, res);
+    expect(res.statusCode).toBe(400);
+    expect(res._getJSONData().error).toEqual("Invalid credentials");
+  });
+});
+
+// describe("getMe (check if user is already logged in", () => {
+//   test("if user logged in, then return that user",async()=>{
+//     const req =
+//   });
+// });
