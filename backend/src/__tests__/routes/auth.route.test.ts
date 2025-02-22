@@ -2,6 +2,7 @@ import { jest, expect, test } from "@jest/globals";
 import httpMocks from "node-mocks-http";
 import { login, signup } from "../../controllers/auth.controller.ts";
 import prisma from "../../db/prisma.ts";
+import { User } from "@prisma/client";
 
 jest.mock("../../db/prisma.ts", () => ({
   user: {
@@ -28,7 +29,7 @@ const existingUser = {
   fullName: "lebron",
   username: "lebronjames",
   profilePic: "lebronpicture.png",
-};
+} as User;
 
 // afterAll((done) => {
 //   server.close(); // close server to avoid open handle
@@ -105,7 +106,7 @@ describe("signup route tests", () => {
   });
 
   test("signup with duplicate username", async () => {
-    const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(existingUser as any);
+    const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(existingUser);
 
     const req = httpMocks.createRequest({
       method: "POST",
@@ -131,7 +132,7 @@ describe("login route tests", () => {
   test("successful login", async () => {
     const spy = jest
       .spyOn(prisma.user, "findUnique")
-      .mockResolvedValueOnce({ ...existingUser, password: "password" } as any);
+      .mockResolvedValueOnce({ ...existingUser, password: "password" });
 
     const req = httpMocks.createRequest({
       method: "POST",
@@ -148,7 +149,7 @@ describe("login route tests", () => {
     expect(spy).toHaveBeenCalledWith({ where: { username: "lebronjames" } });
   });
   test("bad login (no user found)", async () => {
-    const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(null as any);
+    const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(null);
     const req = httpMocks.createRequest({
       method: "POST",
       body: {
@@ -166,7 +167,7 @@ describe("login route tests", () => {
   test("bad login (not matching password)", async () => {
     const spy = jest
       .spyOn(prisma.user, "findUnique")
-      .mockResolvedValueOnce({ ...existingUser, password: "badpassword" } as any);
+      .mockResolvedValueOnce({ ...existingUser, password: "badpassword" });
 
     const req = httpMocks.createRequest({
       method: "POST",

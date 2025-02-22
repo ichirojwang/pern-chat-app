@@ -18,10 +18,10 @@ export const initSocket = (server: http.Server) => {
 
     if (userId) {
       userSocketMap[userId] = socket.id;
-    }
 
-    // emit to all connected clients
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+      // emit to all connected clients
+      io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    }
 
     socket.on("disconnect", () => {
       console.log("user disconnected", socket.id);

@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import prisma from "../db/prisma.ts";
 
 // need this interface to get userId from token
-interface DecodedToken extends JwtPayload {
+export interface DecodedToken extends JwtPayload {
   userId: string;
 }
 

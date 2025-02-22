@@ -1,7 +1,8 @@
 import httpMocks from "node-mocks-http";
-import protectRoute from "../../middleware/protectRoute.ts";
+import protectRoute, { DecodedToken } from "../../middleware/protectRoute.ts";
 import jwt from "jsonwebtoken";
 import prisma from "../../db/prisma.ts";
+import { User } from "@prisma/client";
 
 describe("protectRoute middleware testing", () => {
   const user = {
@@ -9,7 +10,7 @@ describe("protectRoute middleware testing", () => {
     fullName: "lebron",
     username: "lebronjames",
     profilePic: "lebronpicture.png",
-  };
+  } as User;
 
   const decoded = { userId: user.id };
 
@@ -31,8 +32,8 @@ describe("protectRoute middleware testing", () => {
     const res = httpMocks.createResponse();
     const next = jest.fn();
 
-    jest.spyOn(jwt, "verify").mockReturnValueOnce(decoded as any);
-    jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(user as any);
+    jest.spyOn(jwt, "verify").mockImplementationOnce(() => decoded);
+    jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(user);
 
     await protectRoute(req, res, next);
     expect(req.user).toBeDefined();
@@ -61,7 +62,7 @@ describe("protectRoute middleware testing", () => {
     const res = httpMocks.createResponse();
     const next = jest.fn();
 
-    jest.spyOn(jwt, "verify").mockReturnValueOnce(undefined as any);
+    jest.spyOn(jwt, "verify").mockReturnValueOnce(undefined);
 
     await protectRoute(req, res, next);
     expect(res.statusCode).toBe(401);
@@ -78,8 +79,8 @@ describe("protectRoute middleware testing", () => {
     const res = httpMocks.createResponse();
     const next = jest.fn();
 
-    jest.spyOn(jwt, "verify").mockReturnValueOnce(decoded as any);
-    jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(undefined as any);
+    jest.spyOn(jwt, "verify").mockImplementationOnce(() => decoded);
+    jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(null);
 
     await protectRoute(req, res, next);
     expect(res.statusCode).toBe(404);
