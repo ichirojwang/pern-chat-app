@@ -1,9 +1,9 @@
 import request from "supertest";
-import { jest, expect, test } from "@jest/globals";
+import jwt from "jsonwebtoken";
 import prisma from "../../db/prisma.ts";
+import { jest, expect, test } from "@jest/globals";
 import { User } from "@prisma/client";
 import { app } from "../../index.ts";
-import jwt from "jsonwebtoken";
 
 jest.mock("../../db/prisma.ts", () => ({
   user: {
@@ -25,6 +25,7 @@ jest.mock("bcryptjs", () => ({
 
 jest.mock("../../utils/generateToken.ts");
 
+// a default user for testing
 const existingUser = {
   id: "1",
   fullName: "lebron",
@@ -133,7 +134,7 @@ describe("login route tests", () => {
   });
 
   test("bad login (no user found)", async () => {
-    const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(null);
+    // dont need to mock findUnique since we handle that (see top of file)
 
     const res = await request(app).post(LOGIN).send({
       username: "lebronjames",

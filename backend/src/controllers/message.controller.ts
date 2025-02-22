@@ -8,6 +8,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
     const { message } = req.body;
     const { id: receiverId } = req.params; // /send/:id // sending to this id
     const senderId = req.user.id;
+    console.log(req.user);
 
     let conversation = await prisma.conversation.findFirst({
       where: { participantIds: { hasEvery: [senderId, receiverId] } },
@@ -52,6 +53,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
 
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
+      console.log("emitted to:", receiverSocketId);
     }
 
     res.status(201).json(newMessage);
@@ -90,7 +92,7 @@ export const getMessages = async (req: Request, res: Response): Promise<void> =>
 
     res.status(200).json(conversation.messages);
   } catch (error: any) {
-    console.log("Error in sendMessage", error.message);
+    console.log("Error in getMessages", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -109,12 +111,16 @@ export const getUsersForSidebar = async (req: Request, res: Response): Promise<v
         username: true,
         fullName: true,
         profilePic: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
       },
     });
 
     res.status(200).json(users);
   } catch (error: any) {
-    console.log("Error in sendMessage", error.message);
+    console.log("Error in getUsersForSidebar", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

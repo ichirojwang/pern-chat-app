@@ -1,15 +1,16 @@
 import http from "http";
-import { Server as IOServer } from "socket.io";
-import { io as Client, Socket } from "socket.io-client";
+import { Server } from "socket.io";
+import { io as ioc, Socket as ClientSocket } from "socket.io-client";
 import { getReceiverSocketId, initSocket } from "../../socket/socket.ts";
 import { AddressInfo } from "net";
+import { jest, expect, test } from "@jest/globals";
 
 describe("socket server test", () => {
   let httpServer: http.Server;
-  let ioServer: IOServer;
+  let ioServer: Server;
   let port: number;
 
-  const waitForOnlineUsers = (socket: Socket): Promise<string[]> => {
+  const waitForOnlineUsers = (socket: ClientSocket): Promise<string[]> => {
     return new Promise((resolve, reject) => {
       socket.once("getOnlineUsers", (onlineUsers: string[]) => {
         resolve(onlineUsers);
@@ -35,10 +36,14 @@ describe("socket server test", () => {
     console.log("after all");
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   test("should add user and emit getOnlineUsers on connection", (done) => {
     const userId = "1";
     // connect a client with userId "1"
-    const clientSocket: Socket = Client(`http://localhost:${port}`, {
+    const clientSocket: ClientSocket = ioc(`http://localhost:${port}`, {
       query: { userId },
     });
 
@@ -66,22 +71,23 @@ describe("socket server test", () => {
     const userId1 = "1";
     const userId2 = "2";
     // connect a client with userid "user1"
-    const clientSocket1: Socket = Client(`http://localhost:${port}`, {
+    const clientSocket1: ClientSocket = ioc(`http://localhost:${port}`, {
       query: { userId: userId1 },
     });
 
-    const clientSocket2: Socket = Client(`http://localhost:${port}`, {
+    const clientSocket2: ClientSocket = ioc(`http://localhost:${port}`, {
       query: { userId: userId2 },
     });
 
-    await new Promise((resolve) => clientSocket1.on("connect", () => resolve(null)));
-    await new Promise((resolve) => clientSocket2.on("connect", () => resolve(null)));
+    await new Promise<void>((resolve) => clientSocket1.once("connect", resolve));
+    await new Promise<void>((resolve) => clientSocket2.once("connect", resolve));
 
     // check online users from client 1
     // should be 2 users
     const onlineUsersBefore = await waitForOnlineUsers(clientSocket1);
     expect(onlineUsersBefore.length).toEqual(2);
     expect(onlineUsersBefore).toEqual(expect.arrayContaining([userId1, userId2]));
+
     const socketId2Before = getReceiverSocketId(userId2);
     expect(socketId2Before).toBeDefined();
     expect(socketId2Before).toEqual(clientSocket2.id);
