@@ -1,8 +1,9 @@
+import request from "supertest";
 import { jest, expect, test } from "@jest/globals";
-import httpMocks from "node-mocks-http";
-import { login, signup } from "../../controllers/auth.controller.ts";
 import prisma from "../../db/prisma.ts";
 import { User } from "@prisma/client";
+import { app } from "../../index.ts";
+import jwt from "jsonwebtoken";
 
 jest.mock("../../db/prisma.ts", () => ({
   user: {
@@ -37,29 +38,27 @@ const existingUser = {
 // });
 
 describe("signup route tests", () => {
+  const SIGNUP = "/api/auth/signup";
+
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test("successful signup", async () => {
-    const req = httpMocks.createRequest({
-      method: "POST",
-      body: {
-        fullName: "lebron james",
-        username: "lebronjames",
-        password: "password",
-        confirmPassword: "password",
-        gender: "male",
-      },
+    const res = await request(app).post(SIGNUP).send({
+      fullName: "lebron james",
+      username: "lebronjames",
+      password: "password",
+      confirmPassword: "password",
+      gender: "male",
     });
-    const res = httpMocks.createResponse();
 
-    await signup(req, res);
     expect(res.statusCode).toBe(201);
-    expect(res._getJSONData().id).toBeDefined();
+    expect(res.body.id).toBeDefined();
   });
 
   test("signup missing fields", async () => {
+    // test different invalid inputs
     const inputs = [
       {
         fullName: "LeBron James",
@@ -75,93 +74,75 @@ describe("signup route tests", () => {
       {},
     ];
     for (const input of inputs) {
-      const req = httpMocks.createRequest({
-        method: "POST",
-        body: input,
-      });
-      const res = httpMocks.createResponse();
-
-      await signup(req, res);
+      // expect error since inputs are not valid
+      const res = await request(app).post(SIGNUP).send(input);
       expect(res.statusCode).toBe(400);
-      expect(res._getJSONData().error).toEqual("Please fill in all fields");
+      expect(res.body.error).toEqual("Please fill in all fields");
     }
   });
 
   test("signup not matching passwords", async () => {
-    const req = httpMocks.createRequest({
-      method: "POST",
-      body: {
-        fullName: "lebron james",
-        username: "lebronjames",
-        password: "password",
-        confirmPassword: "badpassword",
-        gender: "male",
-      },
+    const res = await request(app).post(SIGNUP).send({
+      fullName: "lebron james",
+      username: "lebronjames",
+      password: "password",
+      confirmPassword: "badpassword",
+      gender: "male",
     });
-    const res = httpMocks.createResponse();
 
-    await signup(req, res);
+    // expect error since passwords must match
     expect(res.statusCode).toBe(400);
-    expect(res._getJSONData().error).toEqual("Passwords don't match");
+    expect(res.body.error).toEqual("Passwords don't match");
   });
 
   test("signup with duplicate username", async () => {
     const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(existingUser);
 
-    const req = httpMocks.createRequest({
-      method: "POST",
-      body: {
-        fullName: "lebron james",
-        username: "lebronjames",
-        password: "password",
-        confirmPassword: "password",
-        gender: "male",
-      },
+    const res = await request(app).post(SIGNUP).send({
+      fullName: "lebron james",
+      username: "lebronjames",
+      password: "password",
+      confirmPassword: "password",
+      gender: "male",
     });
-    const res = httpMocks.createResponse();
 
-    await signup(req, res);
+    // expect error since cannot have same usernames
     expect(res.statusCode).toBe(400);
-    expect(res._getJSONData().error).toEqual("Username already exists");
+    expect(res.body.error).toEqual("Username already exists");
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ where: { username: "lebronjames" } });
   });
 });
 
 describe("login route tests", () => {
+  const LOGIN = "/api/auth/login";
+
   test("successful login", async () => {
     const spy = jest
       .spyOn(prisma.user, "findUnique")
       .mockResolvedValueOnce({ ...existingUser, password: "password" });
 
-    const req = httpMocks.createRequest({
-      method: "POST",
-      body: {
-        username: "lebronjames",
-        password: "password",
-      },
+    const res = await request(app).post(LOGIN).send({
+      username: "lebronjames",
+      password: "password",
     });
-    const res = httpMocks.createResponse();
 
-    await login(req, res);
     expect(res.statusCode).toBe(200);
-    expect(res._getJSONData().id).toBeDefined();
+    expect(res.body.id).toBeDefined();
     expect(spy).toHaveBeenCalledWith({ where: { username: "lebronjames" } });
   });
+
   test("bad login (no user found)", async () => {
     const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValueOnce(null);
-    const req = httpMocks.createRequest({
-      method: "POST",
-      body: {
-        username: "lebronjames",
-        password: "password",
-      },
-    });
-    const res = httpMocks.createResponse();
 
-    await login(req, res);
+    const res = await request(app).post(LOGIN).send({
+      username: "lebronjames",
+      password: "password",
+    });
+
+    // if no user with those credentials found, error
     expect(res.statusCode).toBe(400);
-    expect(res._getJSONData().error).toEqual("Invalid credentials");
+    expect(res.body.error).toEqual("Invalid credentials");
   });
 
   test("bad login (not matching password)", async () => {
@@ -169,23 +150,38 @@ describe("login route tests", () => {
       .spyOn(prisma.user, "findUnique")
       .mockResolvedValueOnce({ ...existingUser, password: "badpassword" });
 
-    const req = httpMocks.createRequest({
-      method: "POST",
-      body: {
-        username: "lebronjames",
-        password: "password",
-      },
+    const res = await request(app).post(LOGIN).send({
+      username: "lebronjames",
+      password: "password",
     });
-    const res = httpMocks.createResponse();
 
-    await login(req, res);
+    // if password is not matching, then error
     expect(res.statusCode).toBe(400);
-    expect(res._getJSONData().error).toEqual("Invalid credentials");
+    expect(res.body.error).toEqual("Invalid credentials");
   });
 });
 
-// describe("getMe (check if user is already logged in", () => {
-//   test("if user logged in, then return that user",async()=>{
-//     const req =
-//   });
-// });
+describe("me route tests (check if user is already logged in)", () => {
+  const ME = "/api/auth/me";
+
+  const user = {
+    id: "1",
+    fullName: "lebron",
+    username: "lebronjames",
+    profilePic: "lebronpicture.png",
+  } as User;
+  const token = "test-token";
+  const decoded = { userId: user.id };
+
+  test("if user logged in, then return that user", async () => {
+    jest.spyOn(jwt, "verify").mockImplementationOnce(() => decoded);
+    const spy = jest.spyOn(prisma.user, "findUnique").mockResolvedValue(existingUser);
+
+    const res = await request(app)
+      .get(ME)
+      .set("Cookie", [`jwt=${token}`]);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.id).toBe("1");
+  });
+});
