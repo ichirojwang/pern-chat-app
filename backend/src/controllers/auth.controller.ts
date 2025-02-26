@@ -103,7 +103,12 @@ export const logout = async (req: Request, res: Response) => {
 
 export const getMe = async (req: Request, res: Response) => {
   try {
-    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    if (!req.user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } }); // req.user comes from protectRoute middleware
 
     if (!user) {
       res.status(404).json({ error: "User not found" });

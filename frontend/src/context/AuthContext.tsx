@@ -1,31 +1,21 @@
-import {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  ReactNode,
-  useState,
-  useContext,
-  useEffect,
-} from "react";
-import { BASE_URL } from "../constants";
+import { createContext, ReactNode, useContext } from "react";
+import { useUser } from "../features/authentication/useUser";
 
-type AuthUserType = {
+interface AuthUser {
   id: string;
   fullName: string;
   email: string;
   profilePic: string;
   gender: string;
-};
+}
 
 interface ContextProps {
-  authUser: AuthUserType | null;
-  setAuthUser: Dispatch<SetStateAction<AuthUserType | null>>;
+  user: AuthUser | null;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<ContextProps>({
-  authUser: null,
-  setAuthUser: () => {},
+  user: null,
   isLoading: false,
 });
 
@@ -34,44 +24,19 @@ interface ProviderProps {
 }
 
 const AuthContextProvider = ({ children }: ProviderProps) => {
-  const [authUser, setAuthUser] = useState<AuthUserType | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { user, isLoading } = useUser();
 
-  useEffect(() => {
-    const fetchAuthUser = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch("/api/auth/me", {
-          method: "GET",
-          credentials: "include",
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error);
-        }
-        setAuthUser(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchAuthUser();
-  }, []);
-
-  return (
-    <AuthContext.Provider value={{ authUser, setAuthUser, isLoading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, isLoading }}>{children}</AuthContext.Provider>;
 };
 
-export const useAuthContext = () => {
-  const authContext = useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
 
-  if (authContext === undefined) throw new Error("Auth Context used outside AuthContextProvider");
+  if (context === undefined) {
+    throw new Error("AuthContext used outside AuthContextProvider");
+  }
 
-  return authContext;
+  return context;
 };
 
 export default AuthContextProvider;

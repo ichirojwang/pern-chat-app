@@ -1,34 +1,33 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import AuthContextProvider from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
-import { useAuthContext } from "./context/AuthContext";
-import ProtectedRoute from "./pages/ProtectedRoute";
-import UnprotectedRoute from "./pages/UnprotectedRoute";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 0,
+    },
+  },
+});
 
 function App() {
-  const { isLoading: isLoadingUser } = useAuthContext();
-
-  if (isLoadingUser)
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <span className="loading loading-spinner loading-lg text-primary" />
-      </div>
-    );
-
-  return (
-    <div className="p-4 h-screen flex items-center justify-center">
+  <AuthContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <Routes>
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Home />} />
+          <Route index element={<Navigate replace to="/messages" />} />
+          <Route path="/messages" element={<Home />} />
         </Route>
-        <Route element={<UnprotectedRoute />}>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-        </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={null} />
       </Routes>
-    </div>
-  );
+    </QueryClientProvider>
+  </AuthContextProvider>;
 }
 
 export default App;

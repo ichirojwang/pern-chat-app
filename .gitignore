@@ -16,6 +16,8 @@ dist-ssr
 notes
 arch
 coverage
+frontend-v1
+workspace.code-workspace
 
 # Editor directories and files
 .vscode/*

@@ -1,6 +1,6 @@
 // /api/auth
 
-import express, { Request, Response } from "express";
+import express from "express";
 import { login, logout, signup, getMe } from "../controllers/auth.controller.ts";
 import protectRoute from "../middleware/protectRoute.ts";
 
