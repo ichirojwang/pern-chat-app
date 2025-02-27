@@ -1,13 +1,23 @@
+import { useParams } from "react-router-dom";
+import Spinner from "../../components/Spinner";
 import { useAuth } from "../../context/AuthContext";
 import { formatTime } from "../../utils/formatTime";
+import { useConversations } from "../conversations/useConversations";
 
 const Message = ({ message }: { message: MessageType }) => {
   const { user } = useAuth();
-  const { selectedConversation } = useConversation();
+  const { conversations, isLoading } = useConversations();
+  const { id } = useParams();
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  const selectedConversationUser = conversations?.find((convo) => id === convo.id);
 
   const fromMe = message?.senderId === user?.id;
   const chatClass = fromMe ? "chat-end" : "chat-start";
-  const img = fromMe ? user?.profilePic : selectedConversation?.profilePic;
+  const img = fromMe ? user?.profilePic : selectedConversationUser?.profilePic;
 
   const bubbleBg = fromMe ? "bg-blue-500" : "";
   const shakeClass = message.shouldShake ? "shake" : "";

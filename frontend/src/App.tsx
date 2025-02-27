@@ -1,5 +1,4 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import AuthContextProvider from "./context/AuthContext";
@@ -11,6 +10,7 @@ import PageNotFound from "./pages/PageNotFound";
 import SocketContextProvider from "./context/SocketContext";
 import AppLayout from "./pages/AppLayout";
 import NoConversationSelected from "./features/conversations/NoConversationSelected";
+import MessageContainer from "./features/messages/MessageContainer";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,7 +38,7 @@ function App() {
                 >
                   <Route index element={<Navigate replace to="/messages" />} />
                   <Route path="/messages" element={<NoConversationSelected />} />
-                  <Route path="/messages/:id" element={<h1>hello</h1>} />
+                  <Route path="/messages/:id" element={<MessageContainer />} />
                 </Route>
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
