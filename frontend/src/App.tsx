@@ -9,6 +9,8 @@ import "./index.css";
 import SignUp from "./pages/Signup";
 import PageNotFound from "./pages/PageNotFound";
 import SocketContextProvider from "./context/SocketContext";
+import AppLayout from "./pages/AppLayout";
+import NoConversationSelected from "./features/conversations/NoConversationSelected";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,9 +29,16 @@ function App() {
           <BrowserRouter>
             <div className="p-4 h-screen flex items-center justify-center">
               <Routes>
-                <Route element={<ProtectedRoute />}>
+                <Route
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout />
+                    </ProtectedRoute>
+                  }
+                >
                   <Route index element={<Navigate replace to="/messages" />} />
-                  <Route path="/messages" element={<Home />} />
+                  <Route path="/messages" element={<NoConversationSelected />} />
+                  <Route path="/messages/:id" element={<h1>hello</h1>} />
                 </Route>
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />

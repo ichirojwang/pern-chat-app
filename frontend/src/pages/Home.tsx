@@ -1,11 +1,10 @@
-import React from "react";
+import Sidebar from "../features/conversations/Sidebar";
 
 const Home = () => {
   return (
     <div className="flex h-[80vh] w-full md:max-w-screen-md md:h-[550px] rounded-lg overflow-hidden bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
-      {/* <Sidebar /> */}
+      <Sidebar />
       {/* <MessageContainer /> */}
-      home
     </div>
   );
 };

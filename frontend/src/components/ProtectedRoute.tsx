@@ -1,9 +1,13 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Spinner from "./Spinner";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 
-const ProtectedRoute = () => {
+interface Props {
+  children: ReactNode;
+}
+
+const ProtectedRoute = ({ children }: Props) => {
   const { user, isLoading, isFetching } = useAuth();
   const navigate = useNavigate();
 
@@ -15,7 +19,7 @@ const ProtectedRoute = () => {
     return <Spinner />;
   }
 
-  return <Outlet />;
+  return children;
 };
 
 export default ProtectedRoute;

@@ -13,7 +13,7 @@ const CheckboxGroup = <T extends readonly string[]>({ options, onCheckboxChange 
     <div className="flex">
       {options.map((option) => {
         return (
-          <div className="form-control">
+          <div className="form-control" key={option}>
             <label className={`label gap-2 cursor-pointer`}>
               <span className="label-text">{option}</span>
               <input
