@@ -15,7 +15,6 @@ export const useSignup = () => {
     mutationFn: ({ username, fullName, password, confirmPassword, gender }: SignupArgs) =>
       signupApi({ username, fullName, password, confirmPassword, gender }),
     onSuccess: (user: UserType) => {
-      console.log(`successful signup for ${user.username}`);
       queryClient.setQueryData(["user"], user);
       navigate("/");
     },

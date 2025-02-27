@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import "./index.css";
 import SignUp from "./pages/Signup";
 import PageNotFound from "./pages/PageNotFound";
+import SocketContextProvider from "./context/SocketContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,20 +22,22 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <BrowserRouter>
-          <div className="p-4 h-screen flex items-center justify-center">
-            <Routes>
-              <Route element={<ProtectedRoute />}>
-                <Route index element={<Navigate replace to="/messages" />} />
-                <Route path="/messages" element={<Home />} />
-              </Route>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="*" element={<PageNotFound />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
+        <SocketContextProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <BrowserRouter>
+            <div className="p-4 h-screen flex items-center justify-center">
+              <Routes>
+                <Route element={<ProtectedRoute />}>
+                  <Route index element={<Navigate replace to="/messages" />} />
+                  <Route path="/messages" element={<Home />} />
+                </Route>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="*" element={<PageNotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </SocketContextProvider>
       </AuthContextProvider>
     </QueryClientProvider>
   );

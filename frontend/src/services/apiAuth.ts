@@ -19,7 +19,7 @@ export const signup = async ({
   password,
   confirmPassword,
   gender,
-}: SignupArgs) => {
+}: SignupArgs): Promise<UserType> => {
   const res = await axios.post("/api/auth/signup", {
     username,
     fullName,
@@ -34,7 +34,7 @@ export const signup = async ({
   return res.data;
 };
 
-export const login = async ({ username, password }: LoginArgs) => {
+export const login = async ({ username, password }: LoginArgs): Promise<UserType> => {
   const res = await axios.post("/api/auth/login", { username, password });
 
   if (res.data.error) {
@@ -44,7 +44,7 @@ export const login = async ({ username, password }: LoginArgs) => {
   return res.data;
 };
 
-export const logout = async () => {
+export const logout = async (): Promise<{ message: string }> => {
   const res = await axios.post("api/auth/logout");
 
   if (res.data.error) {
@@ -54,7 +54,7 @@ export const logout = async () => {
   return res.data;
 };
 
-export const getMe = async () => {
+export const getMe = async (): Promise<UserType> => {
   const res = await axios.get("/api/auth/me");
 
   if (res.data.error) {

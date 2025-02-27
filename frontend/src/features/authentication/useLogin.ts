@@ -14,7 +14,6 @@ export const useLogin = () => {
   } = useMutation({
     mutationFn: ({ username, password }: LoginArgs) => loginApi({ username, password }),
     onSuccess: (user: UserType) => {
-      console.log(`successful login for ${user.username}`);
       queryClient.setQueryData(["user"], user);
       navigate("/messages", { replace: true });
     },

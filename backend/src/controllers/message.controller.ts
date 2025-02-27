@@ -8,7 +8,6 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
     const { message } = req.body;
     const { id: receiverId } = req.params; // /send/:id // sending to this id
     const senderId = req.user.id;
-    console.log(req.user);
 
     let conversation = await prisma.conversation.findFirst({
       where: { participantIds: { hasEvery: [senderId, receiverId] } },
@@ -97,7 +96,7 @@ export const getMessages = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-export const getUsersForSidebar = async (req: Request, res: Response): Promise<void> => {
+export const getConversations = async (req: Request, res: Response): Promise<void> => {
   try {
     const authUserId = req.user.id;
     const users = await prisma.user.findMany({
@@ -120,7 +119,7 @@ export const getUsersForSidebar = async (req: Request, res: Response): Promise<v
 
     res.status(200).json(users);
   } catch (error: any) {
-    console.log("Error in getUsersForSidebar", error.message);
+    console.log("Error in getConversations", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

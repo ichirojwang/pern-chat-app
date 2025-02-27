@@ -1,22 +1,14 @@
 import { createContext, ReactNode, useContext } from "react";
 import { useUser } from "../features/authentication/useUser";
 
-interface AuthUser {
-  id: string;
-  fullName: string;
-  username: string;
-  profilePic: string;
-  gender: string;
-}
-
 interface ContextProps {
-  user: AuthUser | null;
+  user: UserType | undefined;
   isLoading: boolean;
   isFetching: boolean;
 }
 
 const AuthContext = createContext<ContextProps>({
-  user: null,
+  user: undefined,
   isLoading: false,
   isFetching: false,
 });
