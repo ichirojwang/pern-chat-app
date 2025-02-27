@@ -9,7 +9,7 @@ const MessageInput = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!message.trim()) return;
-    sendMessage({ body: message });
+    sendMessage({ message });
     setMessage("");
   };
 

@@ -1,21 +1,24 @@
 // listen for newMessage from socket
 
-import { useCallback, useRef } from "react";
+import { useEffect } from "react";
 import { useSocket } from "../../context/SocketContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useListenMessages = () => {
   const { socket } = useSocket();
-  const listenerAdded = useRef<boolean>(false);
+  const queryClient = useQueryClient();
 
-  const handleNewMessage = useCallback((newMessage: MessageType) => {
-    newMessage.shouldShake = true;
-    const sound = new Audio("/notification.mp3");
-    sound.volume = 0.1;
-    sound.play();
-  }, []);
+  useEffect(() => {
+    socket?.on("newMessage", (newMessage: MessageType) => {
+      newMessage.shouldShake = true;
+      const sound = new Audio("/notification.mp3");
+      sound.volume = 0.1;
+      sound.play();
+      queryClient.invalidateQueries({ queryKey: ["messages", newMessage.senderId] });
+    });
 
-  if (socket && !listenerAdded.current) {
-    socket.on("newMessage", handleNewMessage);
-    listenerAdded.current = true;
-  }
+    return () => {
+      socket?.off("newMessage");
+    };
+  }, [socket, queryClient]);
 };

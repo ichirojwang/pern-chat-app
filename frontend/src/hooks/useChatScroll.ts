@@ -4,11 +4,9 @@ export function useChatScroll(dep: unknown) {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      if (ref.current) {
-        ref.current.scrollTop = ref.current.scrollHeight;
-      }
-    }, 100);
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
   }, [dep]);
 
   return ref;

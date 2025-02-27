@@ -27,9 +27,11 @@ const SocketContextProvider = ({ children }: ProviderProps) => {
       const socket = io(socketUrl, { query: { userId: user.id } });
 
       socketRef.current = socket;
-      socket.on("getOnlineUsers", (users: string[]) => {
-        setOnlineUsers(users);
-      });
+      if (socket.listeners("getOnlineUsers").length === 0) {
+        socket.on("getOnlineUsers", (users: string[]) => {
+          setOnlineUsers(users);
+        });
+      }
 
       // close connection on cleanup
       return () => {

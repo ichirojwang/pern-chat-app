@@ -6,7 +6,7 @@ export interface GetMessagesArgs {
 
 export interface SendMessageArgs {
   id: string;
-  body: string;
+  message: string;
 }
 
 export const getConversations = async (): Promise<UserType[]> => {
@@ -29,8 +29,8 @@ export const getMessages = async ({ id }: GetMessagesArgs): Promise<MessageType[
   return res.data;
 };
 
-export const sendMessage = async ({ id, body }: SendMessageArgs): Promise<MessageType> => {
-  const res = await axios.post(`/api/messages/send/${id}`, { body });
+export const sendMessage = async ({ id, message }: SendMessageArgs): Promise<MessageType> => {
+  const res = await axios.post(`/api/messages/send/${id}`, { message });
 
   if (res.data.error) {
     throw new Error(res.data.error);

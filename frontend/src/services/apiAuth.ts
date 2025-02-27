@@ -45,7 +45,7 @@ export const login = async ({ username, password }: LoginArgs): Promise<UserType
 };
 
 export const logout = async (): Promise<{ message: string }> => {
-  const res = await axios.post("api/auth/logout");
+  const res = await axios.post("/api/auth/logout");
 
   if (res.data.error) {
     throw new Error(res.data.error);

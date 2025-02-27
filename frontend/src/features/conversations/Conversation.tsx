@@ -8,6 +8,7 @@ interface Props {
 const Conversation = ({ conversation }: Props) => {
   const navigate = useNavigate();
   const { onlineUsers } = useSocket();
+  console.log(onlineUsers)
 
   const { id: selectedConversationId } = useParams();
 
