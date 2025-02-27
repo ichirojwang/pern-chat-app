@@ -6,10 +6,11 @@ export const useUser = () => {
     data: user,
     error,
     isLoading,
-    isFetching
+    isFetching,
   } = useQuery({
     queryKey: ["user"],
     queryFn: getMe,
+    retry: false, // only try fetching once
   });
 
   return { user, error, isLoading, isFetching };

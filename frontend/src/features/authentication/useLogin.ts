@@ -16,7 +16,7 @@ export const useLogin = () => {
     onSuccess: (user: UserType) => {
       console.log(`successful login for ${user.username}`);
       queryClient.setQueryData(["user"], user);
-      navigate("/", { replace: true });
+      navigate("/messages", { replace: true });
     },
     onError: (err: unknown) => {
       console.error("Error in useLogin:", err);

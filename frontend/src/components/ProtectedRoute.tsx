@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Spinner from "./Spinner";
 import { useEffect } from "react";
@@ -11,12 +11,8 @@ const ProtectedRoute = () => {
     if (!user && !isLoading && !isFetching) navigate("/login");
   }, [user, isLoading, isFetching, navigate]);
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <Spinner />;
-  }
-
-  if (!user) {
-    <Navigate to="/login" replace={true} />;
   }
 
   return <Outlet />;

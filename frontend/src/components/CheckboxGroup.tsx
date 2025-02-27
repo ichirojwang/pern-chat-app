@@ -24,9 +24,10 @@ const CheckboxGroup = <T extends readonly string[]>({ options, onCheckboxChange 
                   if (option === selectedOption) {
                     setSelectedOption("");
                     onCheckboxChange("");
+                  } else {
+                    setSelectedOption(option);
+                    onCheckboxChange(option);
                   }
-                  setSelectedOption(option);
-                  onCheckboxChange(option);
                 }}
               />
             </label>

@@ -5,6 +5,9 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import AuthContextProvider from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
+import "./index.css";
+import SignUp from "./pages/Signup";
+import PageNotFound from "./pages/PageNotFound";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,14 +23,17 @@ function App() {
       <AuthContextProvider>
         <ReactQueryDevtools initialIsOpen={false} />
         <BrowserRouter>
-          <Routes>
-            <Route element={<ProtectedRoute />}>
-              <Route index element={<Navigate replace to="/messages" />} />
-              <Route path="/messages" element={<Home />} />
-            </Route>
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={null} />
-          </Routes>
+          <div className="p-4 h-screen flex items-center justify-center">
+            <Routes>
+              <Route element={<ProtectedRoute />}>
+                <Route index element={<Navigate replace to="/messages" />} />
+                <Route path="/messages" element={<Home />} />
+              </Route>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
+          </div>
         </BrowserRouter>
       </AuthContextProvider>
     </QueryClientProvider>

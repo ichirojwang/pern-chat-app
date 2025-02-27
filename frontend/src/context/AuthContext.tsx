@@ -4,7 +4,7 @@ import { useUser } from "../features/authentication/useUser";
 interface AuthUser {
   id: string;
   fullName: string;
-  email: string;
+  username: string;
   profilePic: string;
   gender: string;
 }
