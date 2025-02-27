@@ -6,10 +6,11 @@ export const useUser = () => {
     data: user,
     error,
     isLoading,
+    isFetching
   } = useQuery({
     queryKey: ["user"],
     queryFn: getMe,
   });
 
-  return { user, error, isLoading };
+  return { user, error, isLoading, isFetching };
 };

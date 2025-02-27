@@ -12,11 +12,13 @@ interface AuthUser {
 interface ContextProps {
   user: AuthUser | null;
   isLoading: boolean;
+  isFetching: boolean;
 }
 
 const AuthContext = createContext<ContextProps>({
   user: null,
   isLoading: false,
+  isFetching: false,
 });
 
 interface ProviderProps {
@@ -24,9 +26,11 @@ interface ProviderProps {
 }
 
 const AuthContextProvider = ({ children }: ProviderProps) => {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, isFetching } = useUser();
 
-  return <AuthContext.Provider value={{ user, isLoading }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, isLoading, isFetching }}>{children}</AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

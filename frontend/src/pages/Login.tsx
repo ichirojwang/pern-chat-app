@@ -10,7 +10,7 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username || password) {
+    if (!username || !password) {
       return;
     }
 

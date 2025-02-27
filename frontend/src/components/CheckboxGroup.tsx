@@ -2,13 +2,13 @@ import { useState } from "react";
 
 // only one option selected at a time
 
-interface Props {
-  options: string[]; // pass in a list of option
-  onCheckboxChange: (option: string) => void; // whoever uses this component keeps track of what gets selected
+interface Props<T extends readonly string[]> {
+  options: T;
+  onCheckboxChange: (option: T[number] | "") => void;
 }
 
-const CheckboxGroup = ({ options, onCheckboxChange }: Props) => {
-  const [selectedOption, setSelectedOption] = useState<string>("");
+const CheckboxGroup = <T extends readonly string[]>({ options, onCheckboxChange }: Props<T>) => {
+  const [selectedOption, setSelectedOption] = useState<T[number] | "">("");
   return (
     <div className="flex">
       {options.map((option) => {
