@@ -10,7 +10,7 @@ import SocketContextProvider from "./context/SocketContext";
 import AppLayout from "./pages/AppLayout";
 import NoConversationSelected from "./features/conversations/NoConversationSelected";
 import MessageContainer from "./features/messages/MessageContainer";
-import Signup from "./pages/Signup";
+import SignUp from "./pages/SignUp";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,7 +41,7 @@ function App() {
                   <Route path="/messages/:id" element={<MessageContainer />} />
                 </Route>
                 <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+                <Route path="/signup" element={<SignUp />} />
                 <Route path="*" element={<PageNotFound />} />
               </Routes>
             </div>

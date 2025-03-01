@@ -7,7 +7,7 @@ import { GenderOptions } from "../constants";
 import FormErrorMessage from "../components/FormErrorMessage";
 import BlurBox from "../components/BlurBox";
 
-const Signup = () => {
+const SignUp = () => {
   const {
     register,
     reset,
@@ -118,4 +118,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignUp;
