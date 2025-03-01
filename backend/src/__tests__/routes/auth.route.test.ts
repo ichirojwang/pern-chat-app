@@ -1,11 +1,11 @@
 import request from "supertest";
 import jwt from "jsonwebtoken";
-import prisma from "../../db/prisma.ts";
+import prisma from "../../db/prisma.js";
 import { jest, expect, test } from "@jest/globals";
 import { User } from "@prisma/client";
-import { app } from "../../index.ts";
+import { app } from "../../index.js";
 
-jest.mock("../../db/prisma.ts", () => ({
+jest.mock("../../db/prisma.js", () => ({
   user: {
     findUnique: jest.fn(() => null),
     create: jest.fn(() => ({
@@ -23,7 +23,7 @@ jest.mock("bcryptjs", () => ({
   compare: jest.fn((a: string, b: string) => a === b),
 }));
 
-jest.mock("../../utils/generateToken.ts");
+jest.mock("../../utils/generateToken.js");
 
 // a default user for testing
 const existingUser = {

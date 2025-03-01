@@ -1,7 +1,7 @@
 import httpMocks from "node-mocks-http";
-import protectRoute, { DecodedToken } from "../../middleware/protectRoute.ts";
+import protectRoute from "../../middleware/protectRoute.js";
 import jwt from "jsonwebtoken";
-import prisma from "../../db/prisma.ts";
+import prisma from "../../db/prisma.js";
 import { User } from "@prisma/client";
 
 describe("protectRoute middleware testing", () => {

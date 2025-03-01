@@ -4,6 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --watch backend/src --exec node --no-warnings=ExperimentalWarning --loader ts-node/esm backend/src/server.ts",
+    "build": "tsc && npm install && prisma generate --schema=./backend/prisma/schema.prisma && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "node backend/dist/src/server.js",
     "test": "jest",
     "clearJest": "jest --clearCache"
   },
@@ -40,8 +42,6 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.3.1",
-    "react-hook-form": "^7.54.2",
-    "react-router-dom": "^7.2.0",
     "socket.io": "^4.8.1"
   }
 }

@@ -23,8 +23,8 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "zo2",
-  "password": "password"
+  "username": "lebron",
+  "password": "lebron"
 }
 
 ###
@@ -36,3 +36,8 @@ Content-Type: application/json
 {
   "message": "Logging out"
 }
+
+### Get Conversations (GET)
+GET http://localhost:5000/api/messages/conversations
+Accept: application/json
+

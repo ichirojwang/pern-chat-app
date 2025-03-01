@@ -9,7 +9,7 @@ export interface SendMessageArgs {
   message: string;
 }
 
-export const getConversations = async (): Promise<UserType[]> => {
+export const getConversations = async (): Promise<ConversationType[]> => {
   const res = await axios.get("/api/messages/conversations");
 
   if (res.data.error) {

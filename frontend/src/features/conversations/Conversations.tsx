@@ -11,6 +11,7 @@ const Conversations = () => {
     return <h1>No conversations</h1>
   }
 
+  console.log(conversations)
   return (
     <div className="py-2 flex flex-col overflow-auto">
       {conversations.map((conversation) => (

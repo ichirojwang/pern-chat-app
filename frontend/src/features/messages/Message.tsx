@@ -13,11 +13,11 @@ const Message = ({ message }: { message: MessageType }) => {
     return <Spinner />;
   }
 
-  const selectedConversationUser = conversations?.find((convo) => id === convo.id);
+  const selectedConversation = conversations?.find((convo) => id === convo.id);
 
   const fromMe = message?.senderId === user?.id;
   const chatClass = fromMe ? "chat-end" : "chat-start";
-  const img = fromMe ? user?.profilePic : selectedConversationUser?.profilePic;
+  const img = fromMe ? user?.profilePic : selectedConversation?.profilePic;
 
   const bubbleBg = fromMe ? "bg-blue-500" : "";
   const shakeClass = message.shouldShake ? "shake" : "";

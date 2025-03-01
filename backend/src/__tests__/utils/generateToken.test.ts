@@ -1,6 +1,6 @@
 import httpMocks from "node-mocks-http";
 import jwt from "jsonwebtoken";
-import generateToken from "../../utils/generateToken.ts";
+import generateToken from "../../utils/generateToken.js";
 
 describe("generateToken util testing", () => {
   const DAYS = 7; // how long jwt should last, set in generateToken

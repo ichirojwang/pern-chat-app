@@ -1,7 +1,7 @@
 import http from "http";
 import { Server } from "socket.io";
 import { io as ioc, Socket as ClientSocket } from "socket.io-client";
-import { getReceiverSocketId, initSocket } from "../../socket/socket.ts";
+import { getReceiverSocketId, initSocket } from "../../socket/socket.js";
 import { AddressInfo } from "net";
 import { jest, expect, test } from "@jest/globals";
 

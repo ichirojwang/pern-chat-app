@@ -8,13 +8,13 @@ interface Props {
 const Conversation = ({ conversation }: Props) => {
   const navigate = useNavigate();
   const { onlineUsers } = useSocket();
-  console.log(onlineUsers)
 
   const { id: selectedConversationId } = useParams();
+  const conversationUserId = conversation.id
 
-  const isSelected = selectedConversationId === conversation.id;
+  const isSelected = selectedConversationId === conversationUserId
 
-  const isOnline = onlineUsers.includes(conversation.id);
+  const isOnline = onlineUsers.includes(conversationUserId);
 
   return (
     <>
@@ -22,7 +22,7 @@ const Conversation = ({ conversation }: Props) => {
         className={`flex gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer ${
           isSelected ? "bg-sky-500" : ""
         }`}
-        onClick={() => navigate(`/messages/${conversation.id}`)}
+        onClick={() => navigate(`/messages/${conversationUserId}`)}
       >
         <div className={`avatar ${isOnline ? "online" : ""}`}>
           <div className="w-8 md:w-12 rounded-full">

@@ -14,7 +14,8 @@ export const useListenMessages = () => {
       const sound = new Audio("/notification.mp3");
       sound.volume = 0.1;
       sound.play();
-      queryClient.invalidateQueries({ queryKey: ["messages", newMessage.senderId] });
+      console.log(newMessage);
+      queryClient.refetchQueries({ queryKey: ["messages", newMessage.senderId] });
     });
 
     return () => {

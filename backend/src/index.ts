@@ -1,16 +1,17 @@
-import dotenv from "dotenv";
+import "./config.js";
+
 import express from "express";
 import cookieParser from "cookie-parser";
+import path from "path";
 import cors from "cors";
 import http from "http";
 
-import authRoutes from "./routes/auth.route.ts";
-import messageRoutes from "./routes/message.route.ts";
-import { initSocket } from "./socket/socket.ts";
-
-dotenv.config(); // access .env
+import authRoutes from "./routes/auth.route.js";
+import messageRoutes from "./routes/message.route.js";
+import { initSocket } from "./socket/socket.js";
 
 const app = express();
+const __dirname = path.resolve();
 
 app.use(cookieParser()); // to parse cookies
 app.use(express.json()); // to parse json data
@@ -23,6 +24,13 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+  });
+}
 
 const server = http.createServer(app);
 const io = initSocket(server);

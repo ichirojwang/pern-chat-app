@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import prisma from "../db/prisma.ts";
-import { getReceiverSocketId } from "../socket/socket.ts";
-import { io } from "../index.ts";
+import prisma from "../db/prisma.js";
+import { getReceiverSocketId } from "../socket/socket.js";
+import { io } from "../index.js";
 
 export const sendMessage = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -17,9 +17,10 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
     if (!conversation) {
       conversation = await prisma.conversation.create({
         data: {
-          participantIds: {
-            set: [senderId, receiverId],
+          participants: {
+            connect: [{ id: senderId }, { id: receiverId }],
           },
+          participantIds: [senderId, receiverId],
         },
       });
     }
@@ -43,6 +44,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
               id: newMessage.id,
             },
           },
+          lastMessageAt: newMessage.createdAt,
         },
       });
     }
@@ -111,12 +113,12 @@ export const getConversations = async (req: Request, res: Response): Promise<voi
         fullName: true,
         profilePic: true,
         updatedAt: true,
+        conversations: true,
       },
       orderBy: {
         updatedAt: "desc",
       },
     });
-
     res.status(200).json(users);
   } catch (error: any) {
     console.log("Error in getConversations", error.message);

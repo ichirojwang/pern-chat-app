@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import prisma from "../db/prisma.ts";
+import prisma from "../db/prisma.js";
 import bcryptjs from "bcryptjs";
-import generateToken from "../utils/generateToken.ts";
+import generateToken from "../utils/generateToken.js";
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   // console.log("signup function");

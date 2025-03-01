@@ -1,12 +1,15 @@
 import { Server } from "socket.io";
 import http from "http";
 
+const originUrl = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "/";
+console.log(originUrl);
+
 const userSocketMap: { [key: string]: string } = {};
 
 export const initSocket = (server: http.Server) => {
   const io = new Server(server, {
     cors: {
-      origin: ["http://localhost:5173"],
+      origin: [originUrl],
       methods: ["GET", "POST"],
     },
   });

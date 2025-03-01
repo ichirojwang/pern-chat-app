@@ -7,20 +7,13 @@
     "rootDir": "./backend",
     "strict": true, // Enable all strict type-checking options.
     "esModuleInterop": true, // This will allow you to use default imports with CommonJS modules.
-    "skipLibCheck": true, // this option will skip type checking all .d.ts files.
-    "noEmit": true,
-    "allowImportingTsExtensions": true
+    "skipLibCheck": true // this option will skip type checking all .d.ts files.
+    // "noEmit": true,
+    // "allowImportingTsExtensions": true
   },
   "ts-node": {
     "esm": true
   },
-  "include": ["backend/src/**/*", "arch/__tests__"], // Specifies which files to include when compiling your project.
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "frontend-v1",
-    "__tests__",
-    "__mocks__",
-    "jest.config.js"
-  ] // Specifies which files to exclude when compiling your project.
+  "include": ["backend/src/**/*"], // Specifies which files to include when compiling your project.
+  "exclude": ["node_modules", "**/*.spec.ts", "frontend", "**/__tests__/**", "jest.config.js"] // Specifies which files to exclude when compiling your project.
 }

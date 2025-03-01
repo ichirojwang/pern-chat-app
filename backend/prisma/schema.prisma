@@ -34,10 +34,12 @@ model Conversation {
   updatedAt DateTime @updatedAt
 
   participantIds String[]
-  participants   User[]
+  participants   User[] 
 
   messageIds String[]
   messages   Message[]
+
+  lastMessageAt DateTime?
 }
 
 model Message {

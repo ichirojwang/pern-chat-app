@@ -1,8 +1,8 @@
 import request from "supertest";
-import prisma from "../../db/prisma.ts";
+import prisma from "../../db/prisma.js";
 import { jest, expect, test } from "@jest/globals";
 import { Conversation, Message, User } from "@prisma/client";
-import { app } from "../../index.ts";
+import { app } from "../../index.js";
 import { NextFunction, Request, Response } from "express";
 
 // a default user for testing
@@ -38,7 +38,7 @@ const conversation = {
 } as unknown as Conversation;
 
 // mocking protect route middleware and adding user to request
-jest.mock("../../middleware/protectRoute.ts", () => {
+jest.mock("../../middleware/protectRoute.js", () => {
   return (req: Request, res: Response, next: NextFunction) => {
     req.user = user;
     next();
