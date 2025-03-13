@@ -26,7 +26,3 @@ PERN Chat App is a full-stack web application built using the PERN (PostgreSQL, 
 - **JWT Authorization**
 - **bcrypt** for password hashing
 - **Socket.IO** for real-time communication
-
-## Deployment
-- This app is deployed on Render.
-- Live Application: [Here](your-render-deployment-url) (Takes a while to initially load)
