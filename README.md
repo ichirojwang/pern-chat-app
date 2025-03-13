@@ -1,7 +1,7 @@
 # PERN Chat App
 
 ## Overview
-PERN Chat App is a full-stack web application built using the PERN (PostgreSQL, Express, React, Node.js) stack. It provides real-time chat functionality using WebSockets and features a modern frontend with React and TailwindCSS.
+PERN Chat App is a full-stack web application built using the PERN (PostgreSQL, Express, React, Node.js) stack. It provides real-time chat functionality using WebSockets.
 
 ## Tech Stack
 ### Frontend:
